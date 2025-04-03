@@ -19,13 +19,13 @@ const HostStream: unique symbol = Symbol('mystream');
 const flags = (user: RoomUser) => {
     const result: string[] = [];
     if (user.you) {
-        result.push('You');
+        result.push('你');
     }
     if (user.owner) {
-        result.push('Owner');
+        result.push('房主');
     }
     if (user.streaming) {
-        result.push('Streaming');
+        result.push('正在共享');
     }
     if (!result.length) {
         return '';
@@ -97,14 +97,14 @@ export const Room = ({
     React.useEffect(() => {
         if (videoElement && stream) {
             videoElement.srcObject = stream;
-            videoElement.play().catch((e) => console.log('Could not play main video', e));
+            videoElement.play().catch((e) => console.log('无法播放主视频', e));
         }
     }, [videoElement, stream]);
 
     const copyLink = () => {
         navigator?.clipboard?.writeText(window.location.href)?.then(
-            () => enqueueSnackbar('Link Copied', {variant: 'success'}),
-            (err) => enqueueSnackbar('Copy Failed ' + err, {variant: 'error'})
+            () => enqueueSnackbar('链接已复制', {variant: 'success'}),
+            (err) => enqueueSnackbar('复制失败: ' + err, {variant: 'error'})
         );
     };
 
@@ -179,7 +179,7 @@ export const Room = ({
         <div className={classes.videoContainer}>
             {controlVisible && (
                 <Paper className={classes.title} elevation={10} {...setHoverState}>
-                    <Tooltip title="Copy Link">
+                    <Tooltip title="复制房间链接">
                         <Typography
                             variant="h4"
                             component="h4"
@@ -211,20 +211,20 @@ export const Room = ({
                         transform: 'translate(-50%, -50%)',
                     }}
                 >
-                    no stream available
+                    没有可用的视频流
                 </Typography>
             )}
 
             {controlVisible && (
                 <Paper className={classes.control} elevation={10} {...setHoverState}>
                     {state.hostStream ? (
-                        <Tooltip title="Cancel Presentation" arrow>
+                        <Tooltip title="停止共享" arrow>
                             <IconButton onClick={stopShare} size="large">
                                 <CancelPresentationIcon fontSize="large" />
                             </IconButton>
                         </Tooltip>
                     ) : (
-                        <Tooltip title="Start Presentation" arrow>
+                        <Tooltip title="开始共享屏幕" arrow>
                             <IconButton onClick={share} size="large">
                                 <PresentToAllIcon fontSize="large" />
                             </IconButton>
@@ -235,7 +235,7 @@ export const Room = ({
                         classes={{tooltip: classes.noMaxWidth}}
                         title={
                             <div>
-                                <Typography variant="h5">Member List</Typography>
+                                <Typography variant="h5">成员列表</Typography>
                                 {state.users.map((user) => (
                                     <Typography key={user.id}>
                                         {user.name} {flags(user)}
@@ -249,7 +249,7 @@ export const Room = ({
                             <PeopleIcon fontSize="large" />
                         </Badge>
                     </Tooltip>
-                    <Tooltip title="Fullscreen" arrow>
+                    <Tooltip title="全屏" arrow>
                         <IconButton
                             onClick={() => handleFullscreen()}
                             disabled={!selectedStream}
@@ -259,7 +259,7 @@ export const Room = ({
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Settings" arrow>
+                    <Tooltip title="设置" arrow>
                         <IconButton onClick={() => setOpen(true)} size="large">
                             <SettingsIcon fontSize="large" />
                         </IconButton>
@@ -290,7 +290,7 @@ export const Room = ({
                                     className={classes.smallVideoLabel}
                                 >
                                     {state.users.find(({id}) => client.peer_id === id)?.name ??
-                                        'unknown'}
+                                        '未知用户'}
                                 </Typography>
                             </Paper>
                         );
@@ -308,7 +308,7 @@ export const Room = ({
                             align="center"
                             className={classes.smallVideoLabel}
                         >
-                            You
+                            我
                         </Typography>
                     </Paper>
                 )}
